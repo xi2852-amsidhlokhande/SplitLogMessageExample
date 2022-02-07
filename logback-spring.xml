@@ -1,19 +1,93 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} %X{seq} - %msg%n</pattern>
-        </encoder>
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr([${service-name:-},%X{X-B3-TraceId:-},%X{X-B3-SpanId:-},%X{X-Span-Export:-}]){yellow} %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
+
+    <appender name="stdout" class="com.amsidh.mvc.chunk.LogChunkAppender">
+        <appender name="stdout-2" class="ch.qos.logback.core.ConsoleAppender">
+
+            <encoder>
+                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            </encoder>
+
+            <!--<encoder charset="UTF-8" class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+                <providers>
+
+                    &lt;!&ndash; Configure Timestamp and TimeZone related changes &ndash;&gt;
+                    <timestamp>
+                        <fieldName>@timestamp</fieldName>
+                        <pattern>yyyy-MM-dd'T'HH:mm:ss.SSS'Z'</pattern>
+                        <timeZone>DEFAULT</timeZone>
+                    </timestamp>
+                    <sequence/>
+                    &lt;!&ndash; Configure Application Context related changes &ndash;&gt;
+                    <context/>
+
+                    &lt;!&ndash; MDC Configuration&ndash;&gt;
+                    <pattern>
+                        <pattern>
+                            <omitEmptyFields>true</omitEmptyFields>
+                            {
+                            "correlationId": "%mdc{X-B3-TraceId}",
+                            "span_id": "%mdc{X-B3-SpanId}",
+                            "parent_span_id": "%mdc{X-B3-ParentSpanId}",
+                            "exported": "%mdc{spanExportable}"
+                            }
+                        </pattern>
+                    </pattern>
+
+                    &lt;!&ndash; Log level Configuration&ndash;&gt;
+                    <logLevel>
+                        <fieldName>severity</fieldName>
+                    </logLevel>
+                    &lt;!&ndash; Thread name Configuration&ndash;&gt;
+                    <threadName>
+                        <fieldName>thread</fieldName>
+                    </threadName>
+                    &lt;!&ndash; Caller Class Detail Configuration&ndash;&gt;
+                    <callerData>
+                        <fieldName>logClassInfo</fieldName>
+                        <classFieldName>class</classFieldName>
+                        <methodFieldName>method</methodFieldName>
+                        <lineFieldName>line</lineFieldName>
+                        <fileFieldName>file</fileFieldName>
+                    </callerData>
+
+                    &lt;!&ndash; (Only if a throwable was logged) Computes and outputs a hexadecimal hash of the throwable stack.
+                        This helps identifying several occurrences of the same error
+                        https://github.com/logfellow/logstash-logback-encoder/blob/main/stack-hash.md
+                        &ndash;&gt;
+                    <stackHash>
+                        <fieldName>exception-hash</fieldName>
+                        <exclusions>${STE_EXCLUSIONS}</exclusions>
+                    </stackHash>
+                    <stackTrace>
+                        <fieldName>exception</fieldName>
+                        <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                            <inlineHash>true</inlineHash>
+                            <shortenedClassNameLength>short</shortenedClassNameLength>
+                            <maxDepthPerThrowable>short</maxDepthPerThrowable>
+                            <maxLength>short</maxLength>
+                            <rootCauseFirst>true</rootCauseFirst>
+                            <exclusions>${STE_EXCLUSIONS}</exclusions>
+                        </throwableConverter>
+                    </stackTrace>
+                    <arguments>
+                        <includeNonStructuredArguments>false</includeNonStructuredArguments>
+                    </arguments>
+                    <logstashMarkers/>
+
+                    <message>
+                        <fieldName>message</fieldName>
+                    </message>
+
+                </providers>
+            </encoder>-->
+        </appender>
     </appender>
 
-    <appender name="SPLITTER" class="com.latch.LengthSplittingAppender">
-        <appender-ref ref="STDOUT"/>
-        <maxLength>60</maxLength>
-        <sequenceKey>seq</sequenceKey>
-    </appender>
-
-    <root level="debug">
-        <appender-ref ref="SPLITTER"/>
+    <root level="info">
+        <appender-ref ref="stdout"/>
     </root>
 </configuration>
