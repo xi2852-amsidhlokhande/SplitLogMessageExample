@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} %X{seq} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="SPLITTER" class="com.latch.LengthSplittingAppender">
+        <appender-ref ref="STDOUT"/>
+        <maxLength>60</maxLength>
+        <sequenceKey>seq</sequenceKey>
+    </appender>
+
+    <root level="debug">
+        <appender-ref ref="SPLITTER"/>
+    </root>
+</configuration>
